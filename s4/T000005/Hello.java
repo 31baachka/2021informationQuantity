@@ -3,7 +3,7 @@ import java.lang.*;
 
 public class Hello {
     public static void main(String[] args) {
-        System.out.println("hello..(T000005)");
+        System.out.println("github(T000005)");
     }
 }
 
