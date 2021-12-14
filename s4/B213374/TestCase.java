@@ -31,7 +31,7 @@ public interface InformationEstimatorInterface{
 
 public class TestCase {
     static boolean success = true;
-
+    //      }                       }
     public static void main(String[] args) {
 	try {
 	    FrequencerInterface  myObject;
@@ -45,7 +45,9 @@ public class TestCase {
 	    freq = myObject.frequency();
 	    assert freq == 4: "Hi Ho Hi Ho, H: " + freq;
 	    // Write your testCase here
-
+	    myObject.setTarget("Home".getBytes());
+	    int freq1 = myObject.frequency();
+	    assert freq1 == 0: "Hi Ho Hi Ho, Home: " + freq1;
 
 	}
 	catch(Exception e) {
