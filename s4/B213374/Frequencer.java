@@ -1,4 +1,4 @@
-package s4.umemura;  // ここは、かならず、自分の名前に変えよ。
+package s4.B213374;  // ここは、かならず、自分の名前に変えよ。
 import java.lang.*;
 import s4.specification.*;
 
