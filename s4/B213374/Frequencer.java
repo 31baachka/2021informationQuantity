@@ -86,16 +86,13 @@ public class Frequencer implements FrequencerInterface{
 		suffix_j[num] = mySpace[j + num];
 	}
 	
-	if(i > j) len = suffix_j.length; 
-	else len = suffix_i.length;
-
-	for(int num = 0; num < len; num++){
+	for(int num = 0; (num<suffix_i.length)&&(num<suffix_j.length); num++){
 		if(suffix_i[num] > suffix_j[num]) return 1;
 		else if (suffix_i[num] < suffix_j[num]) return -1; 
 	}
                                         
-        if(i > j) return 1;
-	else return -1; 
+        if(i > j) return -1;
+	else return 1; 
     }
 
     public void setSpace(byte []space) { 
@@ -123,6 +120,18 @@ public class Frequencer implements FrequencerInterface{
         //   suffixArray[ 1]= 1:BA
         //   suffixArray[ 2]= 0:CBA
         // のようになるべきである。
+	// count1s[substringIndex] = (counted1s)
+	         int[] count1s = new int[mySpace.length];
+	                 for(int i = 0; i<mySpace.length; i++) count1s[i] = 0; //initialize with 0s
+	                         for(int i = 0; i<mySpace.length; i++){//forall substrings...
+	                                     for(int j = 0; j<mySpace.length; j++)//... compare against all others:
+	                                                     if(suffixCompare(i, j)==1)
+	                                                                         count1s[i] += 1; //and count 1s
+	                                                                                 }
+	                                                                                         // suffixArray[(counted1s)] := substringIndex
+	                                                                                                 for(int i = 0; i<mySpace.length; i++)
+	suffixArray[count1s[i]] = i;
+	//note for the future: make sure that count1s is exactly the set of integers 0,1,...,mySpace.length-1 for any input!!	   
     }
 
     // ここから始まり、指定する範囲までは変更してはならないコードである。
