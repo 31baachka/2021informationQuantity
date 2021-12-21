@@ -70,9 +70,32 @@ public class Frequencer implements FrequencerInterface{
         // if suffix_i < suffix_j, it returns -1  
         // if suffix_i = suffix_j, it returns 0;   
 
-        // ここにコードを記述せよ 
-        //                                          
-        return 0; // この行は変更しなければいけない。 
+        // ここにコードを記述せよ         
+	//
+	if(i == j) return 0; 
+	
+	int len;
+	byte[] suffix_i = new byte[mySpace.length - i];
+	byte[] suffix_j = new byte[mySpace.length - j];
+
+	for(int num = 0; num < mySpace.length - i; num++){
+		suffix_i[num] = mySpace[i + num];
+	}
+  	
+	for(int num = 0; num < mySpace.length - j; num++){
+		suffix_j[num] = mySpace[j + num];
+	}
+	
+	if(i > j) len = suffix_j.length; 
+	else len = suffix_i.length;
+
+	for(int num = 0; num < len; num++){
+		if(suffix_i[num] > suffix_j[num]) return 1;
+		else if (suffix_i[num] < suffix_j[num]) return -1; 
+	}
+                                        
+        if(i > j) return 1;
+	else return -1; 
     }
 
     public void setSpace(byte []space) { 
@@ -207,6 +230,13 @@ public class Frequencer implements FrequencerInterface{
         // if target_start_end is "Ho", it will return 5.                           
         // Assuming the suffix array is created from "Hi Ho Hi Ho",                 
         // if target_start_end is "Ho ", it will return 6.                
+	// Suppose target is set "Ho Ho Ho Ho"
+        // if start = 0, and end = 2, target_start_end is "Ho".
+        // if start = 0, and end = 3, target_start_end is "Ho ".
+        // Assuming the suffix array is created from "Hi Ho Hi Ho",                 
+        // if target_start_end is "Ho", it will return 5.                           
+        // Assuming the suffix array is created from "Hi Ho Hi Ho",                 
+        // if target_start_end is "Ho ", it will return 6.                
         //                                                                          
         // ここにコードを記述せよ。                                                 
         //                                                                         
@@ -262,6 +292,7 @@ public class Frequencer implements FrequencerInterface{
             frequencerObject = new Frequencer();
             frequencerObject.setSpace("ABC".getBytes());
             frequencerObject.printSuffixArray();
+	    System.out.println("Compare int: "+ frequencerObject.suffixCompare(1,2));
             frequencerObject = new Frequencer();
             frequencerObject.setSpace("CBA".getBytes());
             frequencerObject.printSuffixArray();
@@ -298,4 +329,6 @@ public class Frequencer implements FrequencerInterface{
             System.out.println("STOP");
         }
     }
-}
+}                                                                          
+
+
