@@ -35,6 +35,7 @@ public class TestCase {
     public static void main(String[] args) {
 	try {
 	    FrequencerInterface  myObject;
+	    Frequencer.debugMode = true;
 	    int freq;
 	    System.out.println("checking Frequencer");
 
@@ -45,6 +46,11 @@ public class TestCase {
 	    freq = myObject.frequency();
 	    assert freq == 4: "Hi Ho Hi Ho, H: " + freq;
 	    // Write your testCase here
+	    myObject = new Frequencer();
+	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
+            myObject.setTarget("Hi".getBytes());
+            freq = myObject.frequency();
+            assert freq == 2: "Hi Ho Hi Ho, Hi: " + freq;
 
 
 	}

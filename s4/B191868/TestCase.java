@@ -39,14 +39,44 @@ public class TestCase {
 	    System.out.println("checking Frequencer");
 
 	    // This is smoke test
+	    // Case 1
 	    myObject = new Frequencer();
 	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
 	    myObject.setTarget("H".getBytes());
 	    freq = myObject.frequency();
 	    assert freq == 4: "Hi Ho Hi Ho, H: " + freq;
 	    // Write your testCase here
-
-
+	    // Case 2
+	    myObject.setSpace("ababab".getBytes());
+	    myObject.setTarget("abab".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 2: "ababab, abab: " + freq;
+		// Case 3: -1 when target length == 0
+	    myObject.setSpace("ababab".getBytes());
+	    myObject.setTarget("".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == -1: "ababab, TARGET LENGTH 0: " + freq;
+	    // Case 4: 0 when space length == 0
+	    myObject.setSpace("".getBytes());
+	    myObject.setTarget("abab".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 0: "SPACE LENGTH 0, abab: " + freq;
+	    // Case 5: -1 when target is not set
+	    myObject.setSpace("".getBytes());
+	    myObject.setTarget(null);
+	    freq = myObject.frequency();
+	    assert freq == -1: "ababab, TARGET IS NOT SET: " + freq;
+	    // Case 6: 0 when space is not set
+	    myObject.setSpace(null);
+	    myObject.setTarget("abab".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 0: "SPACE IS NOT SET, abab: " + freq;
+	    // Case 7
+	    myObject.setSpace("ababab".getBytes());
+	    myObject.setTarget("c".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 0: "ababab, c: " + freq;
+	    
 	}
 	catch(Exception e) {
 	    System.out.println("Exception occurred in Frequencer Object");

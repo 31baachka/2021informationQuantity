@@ -40,20 +40,28 @@ public class Frequencer implements FrequencerInterface {
 
     @Override
     public int frequency() {
+        if(myTarget == null || myTarget.length == 0) {
+            return -1;
+        }
+        if(mySpace == null || mySpace.length == 0) {
+            return 0;
+        }
         int targetLength = myTarget.length;
         int spaceLength = mySpace.length;
         int count = 0;
-	if(debugMode) { showVariables(); }
+	    if(debugMode) { showVariables(); }
         for(int start = 0; start<spaceLength; start++) { // Is it OK?
             boolean abort = false;
             for(int i = 0; i<targetLength; i++) {
+                if((start+i) >= spaceLength) { abort = true; break; }
                 if(myTarget[i] != mySpace[start+i]) { abort = true; break; }
             }
             if(abort == false) { count++; }
         }
-	if(debugMode) { System.out.printf("%10d\n", count); }
-        return count;
-    }
+
+        if(debugMode) { System.out.printf("%10d\n", count); }
+            return count;
+        }
 
     // I know that here is a potential problem in the declaration.
     @Override
@@ -72,6 +80,12 @@ public class Frequencer implements FrequencerInterface {
             myObject.setSpace("Hi Ho Hi Ho".getBytes());
             myObject.setTarget("H".getBytes());
             freq = myObject.frequency();
+
+            myObject = new Frequencer();
+            myObject.setSpace("ababab".getBytes());
+            myObject.setTarget("abab".getBytes());
+            freq = myObject.frequency();
+
         }
         catch(Exception e) {
             System.out.println("Exception occurred: STOP");

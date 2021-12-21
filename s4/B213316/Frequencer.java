@@ -32,34 +32,86 @@ public class Frequencer implements FrequencerInterface {
     }
 
     private void showVariables() {
-	for(int i=0; i< mySpace.length; i++) { System.out.write(mySpace[i]); }
+	try {
+	    for(int i=0; i< mySpace.length; i++) { System.out.write(mySpace[i]); }
+	}
+	catch (NullPointerException npe) {
+	    System.out.print("Space is not set");
+	}
 	System.out.write(' ');
-	for(int i=0; i< myTarget.length; i++) { System.out.write(myTarget[i]); }
+	try {
+	    for(int i=0; i< myTarget.length; i++) { System.out.write(myTarget[i]); }
+	}
+	catch (NullPointerException npe) {
+	    System.out.print("Target is not set");
+	}
 	System.out.write(' ');
     }
 
     @Override
     public int frequency() {
-        int targetLength = myTarget.length;
-        int spaceLength = mySpace.length;
-        int count = 0;
+	int count = 0;
+	int targetLength, spaceLength;
+	
+	if (myTarget == null) {
+	    targetLength = 0;
+	}
+	else {
+            targetLength = myTarget.length;
+	}
+
+	if (mySpace == null) {
+	    spaceLength = 0;
+	}
+	else {
+            spaceLength = mySpace.length;
+	}
+
 	if(debugMode) { showVariables(); }
-        for(int start = 0; start<spaceLength; start++) { // Is it OK?
-            boolean abort = false;
-            for(int i = 0; i<targetLength; i++) {
-                if(myTarget[i] != mySpace[start+i]) { abort = true; break; }
+	if (targetLength > 0) {
+            for(int start = 0; start<spaceLength; start++) {
+                boolean abort = false;
+                for(int i = 0; i<targetLength; i++) {
+                    if(myTarget[i] != mySpace[start+i]) { abort = true; break; }
+                }
+                if(abort == false) { count++; }
             }
-            if(abort == false) { count++; }
-        }
+	}
+	else {
+	    count = -1;
+	}
 	if(debugMode) { System.out.printf("%10d\n", count); }
         return count;
     }
 
-    // I know that here is a potential problem in the declaration.
     @Override
-    public int subByteFrequency(int start, int length) {
-        // Not yet implemented, but it should be defined as specified.
-        return -1;
+    public int subByteFrequency(int start, int end) {
+	int count = 0;
+	int targetLength;
+
+	if (myTarget == null) {
+	    targetLength = 0;
+	}
+	else {
+            targetLength = myTarget.length;
+	}
+
+	if (debugMode) { showVariables(); }
+	if (targetLength > 0) {
+	    for (int i = start; i < end; i++) {
+		boolean abort = false;
+		for (int j = 0; j < targetLength; j++) {
+		    if (myTarget[j] != mySpace[i+j]) { abort = true; break; }
+		}
+		if (abort == false) { count++; }
+	    }
+	}
+
+	if (targetLength == 0) {
+	    count = -1;
+	}
+	if (debugMode) { System.out.printf("%10d\n", count); }
+        return count;
     }
 
     public static void main(String[] args) {

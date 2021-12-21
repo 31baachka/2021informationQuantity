@@ -65,12 +65,12 @@ public class TestCase {
 	    myObject.setTarget("01".getBytes());
 	    value = myObject.estimation();
 	    assert (value > 2.9999) && (3.0001 >value): "IQ for 01 in 3210321001230123 should be 3.0. But it returns "+value;
-	    myObject.setTarget("0123".getBytes());
+	    myObject.setTarget("01230123".getBytes());
 	    value = myObject.estimation();
-	    assert (value > 2.9999) && (3.0001 >value): "IQ for 0123 in 3210321001230123 should be 3.0. But it returns "+value;
+	    assert (value > 3.9999) && (4.0001 >value): "IQ for 01230123 in 3210321001230123 should be 4.0. But it returns "+value;
 	    myObject.setTarget("00".getBytes());
 	    value = myObject.estimation();
-	    assert (value > 3.9999) && (4.0001 >value): "IQ for 00 in 3210321001230123 should be 3.0. But it returns "+value;
+	    assert (value > 3.9999) && (4.0001 >value): "IQ for 00 in 3210321001230123 should be 4.0. But it returns "+value;
 	}
 	catch(Exception e) {
 	    System.out.println("Exception occurred in InformationEstimator Object");

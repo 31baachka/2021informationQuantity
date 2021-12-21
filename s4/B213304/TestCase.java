@@ -35,9 +35,11 @@ public class TestCase {
     public static void main(String[] args) {
 	try {
 	    FrequencerInterface  myObject;
+	    FrequencerInterface  myTestObject;
+	    Frequencer.debugMode = true;
+	    
 	    int freq;
 	    System.out.println("checking Frequencer");
-
 	    // This is smoke test
 	    myObject = new Frequencer();
 	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
@@ -45,7 +47,11 @@ public class TestCase {
 	    freq = myObject.frequency();
 	    assert freq == 4: "Hi Ho Hi Ho, H: " + freq;
 	    // Write your testCase here
-
+	    myTestObject = new Frequencer();
+	    myTestObject.setSpace("Hi H".getBytes());
+	    myTestObject.setTarget("Hi".getBytes());
+	    freq = myTestObject.frequency();
+	    assert freq == 1: "Hi H, Hi: " + freq;
 
 	}
 	catch(Exception e) {

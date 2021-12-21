@@ -45,7 +45,41 @@ public class TestCase {
 	    freq = myObject.frequency();
 	    assert freq == 4: "Hi Ho Hi Ho, H: " + freq;
 	    // Write your testCase here
-
+	    // { "Hi Ho Hi Ho" "Hi" }
+	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
+	    myObject.setTarget("Hi".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 2: "Hi Ho Hi Ho, Hi: " + freq;
+	    // { "Hi Ho Hi Ho" "Ho "(space) }
+	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
+	    myObject.setTarget("Ho".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 1: "Hi Ho Hi Ho, Ho (space): " + freq;
+	    // { "Hi Ho Hi Ho" " "(space) }
+	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
+	    myObject.setTarget(" ".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 3: "Hi Ho Hi Ho,  (space): " + freq;
+	    // { "Hi Ho Hi Ho" " "(space) }
+	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
+	    myObject.setTarget("Hi Ho Hi Ho Hi Ho".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 0: "Hi Ho Hi Ho, Hi Ho Hi Ho Hi Ho: " + freq;
+	    // { "Hi Ho Hi Ho" " "(space) }
+	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
+	    myObject.setTarget("".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == -1: "Hi Ho Hi Ho, (empty): " + freq;
+	    // { "tacocat malayalam redivider" "a" }
+	    myObject.setSpace("tacocat malayalam redivider".getBytes());
+	    myObject.setTarget("a".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 6: "tacocat malayalam redivider, a: " + freq;
+	    // { "Saeve certando pugnandoque splendor crescit" "an" }
+	    myObject.setSpace("Saeve certando pugnandoque splendor crescit".getBytes());
+	    myObject.setTarget("an".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 2: "Saeve certando pugnandoque splendor crescit, an: " + freq;
 
 	}
 	catch(Exception e) {

@@ -44,7 +44,81 @@ public class TestCase {
 	    myObject.setTarget("H".getBytes());
 	    freq = myObject.frequency();
 	    assert freq == 4: "Hi Ho Hi Ho, H: " + freq;
+
 	    // Write your testCase here
+	    // Test for Frequencer.frequency()
+	    // Space and Target are NULL
+	    myObject = new Frequencer();
+            freq = myObject.frequency();
+            assert freq == -1: "Space and Target are NULL: " + freq;
+            // Target is NULL
+            myObject = new Frequencer();
+            myObject.setSpace("Hi Ho Hi Ho".getBytes());
+            freq = myObject.frequency();
+            assert freq == -1: "Target is NULL: " + freq;
+            // Space is NULL
+	    myObject = new Frequencer();
+	    myObject.setTarget("H".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 0: "Space is NULL: " + freq;
+            // Target length is 0
+	    myObject = new Frequencer();
+	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
+	    myObject.setTarget("".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == -1: "Hi Ho Hi Ho, : " + freq;
+            // Space length is 0
+	    myObject = new Frequencer();
+	    myObject.setSpace("".getBytes());
+	    myObject.setTarget("H".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 0: ", H: " + freq;
+
+	    // Test for Frequencer.subByteFrequency()
+	    // Smoke test
+	    myObject = new Frequencer();
+	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
+	    myObject.setTarget("H".getBytes());
+	    freq = myObject.subByteFrequency(4, 9);	// search "H" from "o Hi "
+	    assert freq == 1: "o Hi , H: " + freq;
+	    myObject = new Frequencer();
+	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
+	    myObject.setTarget("H".getBytes());
+	    freq = myObject.subByteFrequency(7, 9);	// search "H" from "i "
+	    assert freq == 0: "o Hi , H: " + freq;
+	    // Space and Target are NULL
+            // Space = NULL, [start, end) = [4, 9)
+            // startとendが正しく与えられないときの動作は未定義であるためテストを行わない
+	    //myObject = new Frequencer();
+            //freq = myObject.subByteFrequency(4, 9);
+            //assert freq == -1: "Space and Target are NULL: " + freq;
+            // Target is NULL
+            myObject = new Frequencer();
+            myObject.setSpace("Hi Ho Hi Ho".getBytes());
+            freq = myObject.subByteFrequency(4, 9);
+            assert freq == -1: "Target is NULL: " + freq;
+            // Space is NULL
+            // Space = NULL, [start, end) = [4, 9)
+            // startとendが正しく与えられないときの動作は未定義であるためテストを行わない
+	    //myObject = new Frequencer();
+	    //myObject.setTarget("H".getBytes());
+	    //freq = myObject.subByteFrequency(4, 9);
+	    //assert freq == 0: "Space is NULL: " + freq;
+            // Target length is 0
+	    myObject = new Frequencer();
+	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
+	    myObject.setTarget("".getBytes());
+	    freq = myObject.subByteFrequency(4, 9);
+	    assert freq == -1: "Hi Ho Hi Ho, : " + freq;
+            // Space length is 0
+            // Space = "", [start, end) = [4, 9)
+            // startとendが正しく与えられないときの動作は未定義であるためテストを行わない
+	    //myObject = new Frequencer();
+	    //myObject.setSpace("".getBytes());
+	    //myObject.setTarget("H".getBytes());
+	    //freq = myObject.subByteFrequency(4, 9);
+	    //assert freq == 0: ", H: " + freq;
+
 
 
 	}

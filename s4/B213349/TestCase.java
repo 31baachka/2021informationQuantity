@@ -45,7 +45,25 @@ public class TestCase {
 	    freq = myObject.frequency();
 	    assert freq == 4: "Hi Ho Hi Ho, H: " + freq;
 	    // Write your testCase here
+	    myObject.setSpace("ss".getBytes());
+	    myObject.setTarget("ss".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 1: "ss, ss:" + freq;
 
+	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
+	    myObject.setTarget(null);
+	    freq = myObject.frequency();
+	    assert freq == -1 : "Hi Ho Hi Ho, null" + freq;
+
+	    myObject.setSpace(null);
+	    myObject.setTarget("Hi Ho Hi Ho".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 0 : "null, Hi Ho Hi Hi " + freq;
+
+	    myObject.setSpace("s".getBytes());
+	    myObject.setTarget("long".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 0: "s, long:" + freq;
 
 	}
 	catch(Exception e) {

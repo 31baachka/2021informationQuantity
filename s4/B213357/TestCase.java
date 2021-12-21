@@ -44,9 +44,22 @@ public class TestCase {
 	    myObject.setTarget("H".getBytes());
 	    freq = myObject.frequency();
 	    assert freq == 4: "Hi Ho Hi Ho, H: " + freq;
+
 	    // Write your testCase here
+	    myObject.setSpace("H".getBytes()); // 検索文字列が検索対象文字列より長い場合
+	    myObject.setTarget("HH".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 0: "H, HH: " + freq;
 
+	    myObject.setSpace("".getBytes()); // 検索対象文字列が空の場合
+	    myObject.setTarget("H".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 0: ", H: " + freq;
 
+		myObject.setSpace("ひ ほ ひ ほ".getBytes()); // 日本語(全角文字列)の場合
+	    myObject.setTarget("ひ".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 2: "ひ ほ ひ ほ, ひ: " + freq;
 	}
 	catch(Exception e) {
 	    System.out.println("Exception occurred in Frequencer Object");
@@ -56,19 +69,25 @@ public class TestCase {
 	try {
 	    InformationEstimatorInterface myObject;
 	    double value;
+
 	    System.out.println("checking InformationEstimator");
+
 	    myObject = new InformationEstimator();
+
 	    myObject.setSpace("3210321001230123".getBytes());
 	    myObject.setTarget("0".getBytes());
 	    value = myObject.estimation();
 	    assert (value > 1.9999) && (2.0001 >value): "IQ for 0 in 3210321001230123 should be 2.0. But it returns "+value;
-	    myObject.setTarget("01".getBytes());
+	    
+		myObject.setTarget("01".getBytes());
 	    value = myObject.estimation();
 	    assert (value > 2.9999) && (3.0001 >value): "IQ for 01 in 3210321001230123 should be 3.0. But it returns "+value;
-	    myObject.setTarget("0123".getBytes());
+	    
+		myObject.setTarget("0123".getBytes());
 	    value = myObject.estimation();
 	    assert (value > 2.9999) && (3.0001 >value): "IQ for 0123 in 3210321001230123 should be 3.0. But it returns "+value;
-	    myObject.setTarget("00".getBytes());
+	    
+		myObject.setTarget("00".getBytes());
 	    value = myObject.estimation();
 	    assert (value > 3.9999) && (4.0001 >value): "IQ for 00 in 3210321001230123 should be 3.0. But it returns "+value;
 	}

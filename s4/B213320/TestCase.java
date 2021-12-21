@@ -35,6 +35,7 @@ public class TestCase {
     public static void main(String[] args) {
 	try {
 	    FrequencerInterface  myObject;
+            Frequencer.debugMode = true;
 	    int freq;
 	    System.out.println("checking Frequencer");
 
@@ -44,9 +45,13 @@ public class TestCase {
 	    myObject.setTarget("H".getBytes());
 	    freq = myObject.frequency();
 	    assert freq == 4: "Hi Ho Hi Ho, H: " + freq;
+
 	    // Write your testCase here
-
-
+	    myObject.setSpace("AOAO OAOA AOOA OAAO".getBytes());
+	    myObject.setTarget("OAO".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 2: "AOAO OAOA AOOA OAAO, O: " + freq;
+	    
 	}
 	catch(Exception e) {
 	    System.out.println("Exception occurred in Frequencer Object");

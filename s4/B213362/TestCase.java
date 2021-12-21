@@ -41,9 +41,9 @@ public class TestCase {
 	    // This is smoke test
 	    myObject = new Frequencer();
 	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
-	    myObject.setTarget("H".getBytes());
+	    myObject.setTarget("Hoooooooooooooooooo".getBytes());
 	    freq = myObject.frequency();
-	    assert freq == 4: "Hi Ho Hi Ho, H: " + freq;
+	    assert freq == 0: "Hi Ho Hi Ho, Hoooooooooooooooooo: " + freq;
 	    // Write your testCase here
 
 
@@ -77,6 +77,7 @@ public class TestCase {
 	    success = false;
 	}
         if(success) { System.out.println("TestCase OK"); } 
+		if(!success) { System.out.println("TestCase NG"); }
     }
 }	    
 	    

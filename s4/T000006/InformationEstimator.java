@@ -24,10 +24,10 @@ public class InformationEstimator implements InformationEstimatorInterface {
     FrequencerInterface myFrequencer;  // Object for counting frequency
 
     private void showVariables() {
-	for(int i=0; i< mySpace.length; i++) { System.out.write(mySpace[i]); }
-	System.out.write(' ');
-	for(int i=0; i< myTarget.length; i++) { System.out.write(myTarget[i]); }
-	System.out.write(' ');
+		for(int i=0; i< mySpace.length; i++) { System.out.write(mySpace[i]); }
+		System.out.write(' ');
+		for(int i=0; i< myTarget.length; i++) { System.out.write(myTarget[i]); }
+		System.out.write(' ');
     }
 
     byte[] subBytes(byte[] x, int start, int end) {

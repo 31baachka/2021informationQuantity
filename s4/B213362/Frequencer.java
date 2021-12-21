@@ -44,7 +44,7 @@ public class Frequencer implements FrequencerInterface {
         int spaceLength = mySpace.length;
         int count = 0;
 	if(debugMode) { showVariables(); }
-        for(int start = 0; start<spaceLength; start++) { // Is it OK?
+        for(int start = 0; start<(spaceLength - targetLength + 1); start++) { // Is it OK?
             boolean abort = false;
             for(int i = 0; i<targetLength; i++) {
                 if(myTarget[i] != mySpace[start+i]) { abort = true; break; }
@@ -70,7 +70,7 @@ public class Frequencer implements FrequencerInterface {
         try {
             myObject = new Frequencer();
             myObject.setSpace("Hi Ho Hi Ho".getBytes());
-            myObject.setTarget("H".getBytes());
+            myObject.setTarget("Hoooooooooooooooooo".getBytes());
             freq = myObject.frequency();
         }
         catch(Exception e) {

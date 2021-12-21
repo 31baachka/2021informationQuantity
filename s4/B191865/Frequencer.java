@@ -1,5 +1,7 @@
 package s4.B191865; // Please modify to s4.Bnnnnnn, where nnnnnn is your student ID. 
+
 import java.lang.*;
+
 import s4.specification.*;
 
 /*
@@ -26,32 +28,68 @@ public class Frequencer implements FrequencerInterface {
     public void setTarget(byte[] target) {
         myTarget = target;
     }
+
     @Override
     public void setSpace(byte[] space) {
         mySpace = space;
     }
 
     private void showVariables() {
-	for(int i=0; i< mySpace.length; i++) { System.out.write(mySpace[i]); }
-	System.out.write(' ');
-	for(int i=0; i< myTarget.length; i++) { System.out.write(myTarget[i]); }
-	System.out.write(' ');
+        for (byte b : mySpace) {
+            System.out.write(b);
+        }
+        System.out.write(' ');
+        for (byte b : myTarget) {
+            System.out.write(b);
+        }
+        System.out.write(' ');
     }
 
     @Override
     public int frequency() {
-        int targetLength = myTarget.length;
-        int spaceLength = mySpace.length;
-        int count = 0;
-	if(debugMode) { showVariables(); }
-        for(int start = 0; start<spaceLength; start++) { // Is it OK?
-            boolean abort = false;
-            for(int i = 0; i<targetLength; i++) {
-                if(myTarget[i] != mySpace[start+i]) { abort = true; break; }
-            }
-            if(abort == false) { count++; }
+        if (myTarget == null || myTarget.length == 0)
+        {
+            return -1;
         }
-	if(debugMode) { System.out.printf("%10d\n", count); }
+        int targetLength = myTarget.length;
+
+
+        if (mySpace == null ||  mySpace.length == 0)
+        {
+            return 0;
+        }
+        int spaceLength = mySpace.length;
+
+        int count = 0;
+
+        if (debugMode) {
+            showVariables();
+        }
+
+        for (int start = 0; start < spaceLength; start++) { // Is it OK?
+            boolean abort = false;
+
+            for (int i = 0; i < targetLength; i++) {
+                if (i + start >= spaceLength) {
+                    abort = true;
+                    break;
+                }
+
+                if (myTarget[i] != mySpace[start + i]) {
+                    abort = true;
+                    break;
+                }
+            }
+
+            if (abort == false) {
+                count++;
+            }
+        }
+
+        if (debugMode) {
+            System.out.printf("%10d\n", count);
+        }
+
         return count;
     }
 
@@ -65,15 +103,15 @@ public class Frequencer implements FrequencerInterface {
     public static void main(String[] args) {
         Frequencer myObject;
         int freq;
-	// White box test, here.
-	debugMode = true;
+
+        // White box test, here.
+        debugMode = true;
         try {
             myObject = new Frequencer();
             myObject.setSpace("Hi Ho Hi Ho".getBytes());
             myObject.setTarget("H".getBytes());
             freq = myObject.frequency();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             System.out.println("Exception occurred: STOP");
         }
     }

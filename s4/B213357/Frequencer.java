@@ -19,8 +19,8 @@ interface FrequencerInterface {  // This interface provides the design for frequ
 public class Frequencer implements FrequencerInterface {
     // Code to Test, *warning: This code contains intentional problem*
     static boolean debugMode = false;
-    byte[] myTarget;
-    byte[] mySpace;
+    byte[] myTarget; /* 検索する文字列(バイト) */
+    byte[] mySpace;  /* 検索対象の文字列(バイト) */
 
     @Override
     public void setTarget(byte[] target) {
@@ -32,26 +32,33 @@ public class Frequencer implements FrequencerInterface {
     }
 
     private void showVariables() {
-	for(int i=0; i< mySpace.length; i++) { System.out.write(mySpace[i]); }
-	System.out.write(' ');
-	for(int i=0; i< myTarget.length; i++) { System.out.write(myTarget[i]); }
-	System.out.write(' ');
+        for(int i=0; i< mySpace.length; i++) { System.out.write(mySpace[i]); }
+        System.out.write(' ');
+
+        for(int i=0; i< myTarget.length; i++) { System.out.write(myTarget[i]); }
+        System.out.write(' ');
     }
 
     @Override
     public int frequency() {
         int targetLength = myTarget.length;
-        int spaceLength = mySpace.length;
+        int spaceLength  = mySpace.length;
         int count = 0;
-	if(debugMode) { showVariables(); }
-        for(int start = 0; start<spaceLength; start++) { // Is it OK?
+
+	    if(debugMode) { showVariables(); }
+
+        // 検索対象の文字列から検索する文字列の数を数える
+        for(int start = 0; start < spaceLength - targetLength + 1; start++) { // Is it OK?
             boolean abort = false;
-            for(int i = 0; i<targetLength; i++) {
+
+            for(int i = 0; i < targetLength; i++) {
                 if(myTarget[i] != mySpace[start+i]) { abort = true; break; }
             }
             if(abort == false) { count++; }
         }
-	if(debugMode) { System.out.printf("%10d\n", count); }
+
+	    if(debugMode) { System.out.printf("%10d\n", count); }
+
         return count;
     }
 
@@ -65,8 +72,9 @@ public class Frequencer implements FrequencerInterface {
     public static void main(String[] args) {
         Frequencer myObject;
         int freq;
-	// White box test, here.
-	debugMode = true;
+
+	    // White box test, here.
+	    debugMode = true;
         try {
             myObject = new Frequencer();
             myObject.setSpace("Hi Ho Hi Ho".getBytes());
