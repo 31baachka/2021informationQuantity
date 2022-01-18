@@ -172,7 +172,7 @@ public class Frequencer implements FrequencerInterface{
         //    if suffix_i is "Ho Hi Ho", and target_j_k is "Ho", 
         //            targetCompare should return 0;
         //    if suffix_i is "Ho Hi Ho", and suffix_j is "Ho", 
-        //            suffixCompare should return -1.
+        //            suffixCompare should return 1. (It was written -1 before 2021/12/21)
         //
         // ここに比較のコードを書け 
         //
