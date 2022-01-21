@@ -342,9 +342,19 @@ public class Frequencer implements FrequencerInterface{
               10:o Hi Ho                     
             */
 
-            frequencerObject.setTarget("H".getBytes());
+            
             //                                         
-            // ****  Please write code to check subByteStartIndex, and subByteEndIndex
+            frequencerObject.setTarget("Ho Ho Ho Ho".getBytes());
+            int ans = frequencerObject.subByteStartIndex(0,2);
+            System.out.println("frequencerObject.subByteStartIndex(0,2) = " + ans); // return 5
+            ans = frequencerObject.subByteStartIndex(0,3);
+            System.out.println("frequencerObject.subByteStartIndex(0,3) = " + ans); // return 6
+
+            frequencerObject.setTarget("High_and_Low".getBytes());
+            ans = frequencerObject.subByteEndIndex(0,2);
+            System.out.println("frequencerObject.subByteEndIndex(0,2) = " + ans); // return 5
+            ans = frequencerObject.subByteEndIndex(1,2);
+            System.out.println("frequencerObject.subByteEndIndex(1,2) = " + ans); // return 9
             //
 
             int result = frequencerObject.frequency();
