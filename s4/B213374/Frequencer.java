@@ -208,12 +208,31 @@ public class Frequencer implements FrequencerInterface{
         //
         // ここに比較のコードを書け 
         //
-        return 0; // この行は変更しなければならない。
+        int exec = 0;
+	String space = new String(mySpace);
+	String target = new String(myTarget);
+	String suffix_i = space.substring(i);
+	String target_jk = target.substring(j, k);
+	int min = Math.min(suffix_i.length(), target_jk.length());
+	for(int n = 0; n < min; n++){
+		if(suffix_i.charAt(n) > target_jk.charAt(n)){
+			exec = 1;
+			break;
+		}
+		else if(suffix_i.charAt(n) < target_jk.charAt(n)){
+			exec = -1;
+			break;
+		}
+	}
+	if(target_jk.length() > suffix_i.length() && exec == 0){
+		exec = -1;
+	}
+	return exec;
     }
 
 
     private int subByteStartIndex(int start, int end) {
-        //suffix arrayのなかで、目的の文字列の出現が始まる位置を求めるメソッド
+       //suffix arrayのなかで、目的の文字列の出現が始まる位置を求めるメソッド
         // 以下のように定義せよ。
         // The meaning of start and end is the same as subByteFrequency.
         /* Example of suffix created from "Hi Ho Hi Ho"
