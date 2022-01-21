@@ -249,7 +249,16 @@ public class Frequencer implements FrequencerInterface{
         //                                                                          
         // ここにコードを記述せよ。                                                 
         //                                                                         
-        return suffixArray.length; //このコードは変更しなければならない。          
+        int ans = -1;
+
+        for(int i = 0; i < suffixArray.length; i++){
+            if(targetCompare(suffixArray[i],start,end) == 0){
+                ans = i;
+                break;
+            }
+        }
+
+        return ans;              
     }
 
     private int subByteEndIndex(int start, int end) {
@@ -281,7 +290,15 @@ public class Frequencer implements FrequencerInterface{
         //                                                                   
         //　ここにコードを記述せよ                                           
         //                                                                   
-        return suffixArray.length; // この行は変更しなければならない、       
+        int ans=-1;
+
+        for(int i = suffixArray.length - 1; i >= 0; i--){
+            if(targetCompare(suffixArray[i], start, end) == 0){
+                ans = i + 1;
+                break;
+            }
+        }
+        return ans;        
     }
 
 
