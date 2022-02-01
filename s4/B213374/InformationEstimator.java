@@ -63,7 +63,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
 
         for(int i = 1; i <= myTarget.length; i++){
             double suffix_i = Double.MAX_VALUE;
-            new s = 0
+            int s = 0
         	for(; s < i; s++){
                 myFrequencer.setTarget(subBytes(myTarget, s, i));
                 double value = suffixEstimation[s] + iq(myFrequencer.frequency());
