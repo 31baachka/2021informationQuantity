@@ -57,7 +57,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
     @Override
     public double estimation(){
         if(debugMode) { showVariables(); }
-        if(debugMode) { System.out.printf("length=%d ", +myTarget.length); }
+        if(debugMode) { System.out.printf("length=%d ", myTarget.length); }
         double [] suffixEstimation = new double[myTarget.length+1];  
         suffixEstimation[0] = (double) 0.0;
 
