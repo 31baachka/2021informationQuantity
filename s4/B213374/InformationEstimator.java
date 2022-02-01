@@ -24,10 +24,10 @@ public class InformationEstimator implements InformationEstimatorInterface {
     FrequencerInterface myFrequencer;  // Object for counting frequency
 
     private void showVariables() {
-	for(int i=0; i< mySpace.length; i++) { System.out.write(mySpace[i]); }
-	System.out.write(' ');
-	for(int i=0; i< myTarget.length; i++) { System.out.write(myTarget[i]); }
-	System.out.write(' ');
+		for(int i=0; i< mySpace.length; i++) { System.out.write(mySpace[i]); }
+		System.out.write(' ');
+		for(int i=0; i< myTarget.length; i++) { System.out.write(myTarget[i]); }
+		System.out.write(' ');
     }
 
     byte[] subBytes(byte[] x, int start, int end) {
@@ -56,53 +56,31 @@ public class InformationEstimator implements InformationEstimatorInterface {
 
     @Override
     public double estimation(){
-        boolean [] partition = new boolean[myTarget.length+1];
-        int np = 1<<(myTarget.length-1);
-        double value = Double.MAX_VALUE; // value = mininimum of each "value1".
-	if(debugMode) { showVariables(); }
-        if(debugMode) { System.out.printf("np=%d length=%d ", np, +myTarget.length); }
+        if(debugMode) { showVariables(); }
+        if(debugMode) { System.out.printf("length=%d ", +myTarget.length); }
+        double [] suffixEstimation = new double[myTarget.length+1];  
+        suffixEstimation[0] = (double) 0.0;
 
-        for(int p=0; p<np; p++) { // There are 2^(n-1) kinds of partitions.
-            // binary representation of p forms partition.
-            // for partition {"ab" "cde" "fg"}
-            // a b c d e f g   : myTarget
-            // T F T F F T F T : partition:
-            partition[0] = true; // I know that this is not needed, but..
-            for(int i=0; i<myTarget.length -1;i++) {
-                partition[i+1] = (0 !=((1<<i) & p));
+        for(int i = 1; i <= myTarget.length; i++){
+            double suffix_i = Double.MAX_VALUE;
+            new s = 0
+        	for(; s < i; s++){
+                myFrequencer.setTarget(subBytes(myTarget, s, i));
+                double value = suffixEstimation[s] + iq(myFrequencer.frequency());
+                if(value < suffix_i) suffix_i = value;
             }
-            partition[myTarget.length] = true;
-
-            // Compute Information Quantity for the partition, in "value1"
-            // value1 = IQ(#"ab")+IQ(#"cde")+IQ(#"fg") for the above example
-            double value1 = (double) 0.0;
-            int end = 0;
-            int start = end;
-            while(start<myTarget.length) {
-                // System.out.write(myTarget[end]);
-                end++;;
-                while(partition[end] == false) {
-                    // System.out.write(myTarget[end]);
-                    end++;
-                }
-                // System.out.print("("+start+","+end+")");
-                myFrequencer.setTarget(subBytes(myTarget, start, end));
-                value1 = value1 + iq(myFrequencer.frequency());
-                start = end;
-            }
-            // System.out.println(" "+ value1);
-
-            // Get the minimal value in "value"
-            if(value1 < value) value = value1;
+            
+            suffixEstimation[i] = suffix_i;
         }
-	if(debugMode) { System.out.printf("%10.5f\n", value); }
-        return value;
+        
+	    if(debugMode) { System.out.printf("%10.5f\n", suffixEstimation[myTarget.length]); }
+        return suffixEstimation[myTarget.length];
     }
 
     public static void main(String[] args) {
         InformationEstimator myObject;
         double value;
-	debugMode = true;
+		debugMode = true;
         myObject = new InformationEstimator();
         myObject.setSpace("3210321001230123".getBytes());
         myObject.setTarget("0".getBytes());
@@ -115,4 +93,3 @@ public class InformationEstimator implements InformationEstimatorInterface {
         value = myObject.estimation();
     }
 }
-
