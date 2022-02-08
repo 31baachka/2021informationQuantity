@@ -73,6 +73,22 @@ public class TestCase {
 	    myObject.setTarget("00".getBytes());
 	    value = myObject.estimation();
 	    assert (value > 3.9999) && (4.0001 >value): "IQ for 00 in 3210321001230123 should be 3.0. But it returns "+value;
+	    // if myTarget = null
+	    InformationEstimatorInterface myObject2;
+	    myObject2 = new InformationEstimator();
+            myObject2.setSpace("3210321001230123".getBytes());
+	    value = myObject2.estimation();
+	    assert (value == 0.0): "IQ for null in 3210321001230123 should be 0.0. But it returns "+value;
+	    // if myTarget.length = 0
+	    myObject2.setTarget("".getBytes());
+	    value = myObject2.estimation();
+	    assert (value == 0.0): "IQ for '' in 3210321001230123 should be 0.0. But it returns "+value;
+	    // if mySpace = null
+	    InformationEstimatorInterface myObject3;
+	    myObject3 = new InformationEstimator();
+	    myObject3.setTarget("00".getBytes());
+	    value = myObject3.estimation();
+	    assert (value == Double.MAX_VALUE): "IQ for 00 in null should be Double.MAX_VALUE But it returns "+value;
 	}
 	catch(Exception e) {
 	    System.out.println("Exception occurred in InformationEstimator Object");
