@@ -34,11 +34,12 @@ public class TestCase {
 
     public static void main(String[] args) {
 	try {
-	    FrequencerInterface  myObject;
+	    //FrequencerInterface  myObject;
+	    Frequencer  myObject;
 	    int freq;
 	    System.out.println("checking Frequencer");
 
-	    // This is smoke test
+		// This is smoke test
 	    myObject = new Frequencer();
 	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
 	    myObject.setTarget("H".getBytes());
@@ -50,6 +51,12 @@ public class TestCase {
 	    freq = myObject.frequency();
 	    assert freq == 0: "Hi, Hi Ho Hi Ho:" + freq;
 
+		myObject.setSpace("Hi Ho Hi Ho".getBytes());
+    	myObject.printSuffixArray();
+    	myObject.setTarget("Ho ".getBytes());
+		int count = myObject.subByteFrequency(0, 2);
+		System.out.println("Ho, Hi Ho Hi Ho, count=" + count);
+		assert count == 2: "Ho, Hi Ho Hi Ho" + count;
 	}
 	catch(Exception e) {
 	    System.out.println("Exception occurred in Frequencer Object");
@@ -74,6 +81,24 @@ public class TestCase {
 	    myObject.setTarget("00".getBytes());
 	    value = myObject.estimation();
 	    assert (value > 3.9999) && (4.0001 >value): "IQ for 00 in 3210321001230123 should be 3.0. But it returns "+value;
+
+		// additional case
+		// Case 1: myTarget == null
+		InformationEstimatorInterface myObject2;
+		myObject2 = new InformationEstimator();
+		myObject2.setSpace("3210321001230123".getBytes());
+		value = myObject2.estimation();
+		assert (value == 0.0): "IQ for null in 3210321001230123 should be 0.0. But it returns "+value;
+		// Case 2: myTarget.length == 0
+		myObject2.setTarget("".getBytes());
+		value = myObject2.estimation();
+		assert (value == 0.0): "IQ for '' in 3210321001230123 should be 0.0. But it returns "+value;
+		// Case 3: mySpace == null
+		InformationEstimatorInterface myObject3;
+		myObject3 = new InformationEstimator();
+		myObject3.setTarget("00".getBytes());
+		value = myObject3.estimation();
+		assert (value == Double.MAX_VALUE): "IQ for 00 in null should be Double.MAX_VALUE But it returns "+value;
 	}
 	catch(Exception e) {
 	    System.out.println("Exception occurred in InformationEstimator Object");

@@ -2,6 +2,9 @@ package s4.B191868; // Please modify to s4.Bnnnnnn, where nnnnnn is your student
 import java.lang.*;
 import s4.specification.*;
 
+// DELETE
+import java.util.Arrays;
+
 /* What is imported from s4.specification
 package s4.specification;
 public interface InformationEstimatorInterface {
@@ -18,16 +21,16 @@ public interface InformationEstimatorInterface {
 
 public class InformationEstimator implements InformationEstimatorInterface {
     static boolean debugMode = false;
-    // Code to test, *warning: This code is slow, and it lacks the required test
     byte[] myTarget; // data to compute its information quantity
     byte[] mySpace;  // Sample space to compute the probability
     FrequencerInterface myFrequencer;  // Object for counting frequency
+    double[] suffixEstimation; // store the estimation of substrings
 
     private void showVariables() {
-	for(int i=0; i< mySpace.length; i++) { System.out.write(mySpace[i]); }
-	System.out.write(' ');
-	for(int i=0; i< myTarget.length; i++) { System.out.write(myTarget[i]); }
-	System.out.write(' ');
+        for(int i=0; i< mySpace.length; i++) { System.out.write(mySpace[i]); }
+        System.out.write(' ');
+        for(int i=0; i< myTarget.length; i++) { System.out.write(myTarget[i]); }
+        System.out.write(' ');
     }
 
     byte[] subBytes(byte[] x, int start, int end) {
@@ -39,7 +42,10 @@ public class InformationEstimator implements InformationEstimatorInterface {
     }
 
     // IQ: information quantity for a count, -log2(count/sizeof(space))
-    double iq(int freq) {
+    double iq(int start, int end) {
+        myFrequencer.setTarget(subBytes(myTarget, start, end));
+        int freq = myFrequencer.frequency();
+        if(freq == 0) return Double.MAX_VALUE;
         return  - Math.log10((double) freq / (double) mySpace.length)/ Math.log10((double) 2.0);
     }
 
@@ -51,58 +57,45 @@ public class InformationEstimator implements InformationEstimatorInterface {
     @Override
     public void setSpace(byte[] space) {
         myFrequencer = new Frequencer();
-        mySpace = space; myFrequencer.setSpace(space);
+        mySpace = space;
+        myFrequencer.setSpace(space);
     }
 
     @Override
     public double estimation(){
-        boolean [] partition = new boolean[myTarget.length+1];
-        int np = 1<<(myTarget.length-1);
-        double value = Double.MAX_VALUE; // value = mininimum of each "value1".
-	if(debugMode) { showVariables(); }
-        if(debugMode) { System.out.printf("np=%d length=%d ", np, +myTarget.length); }
+        // Returns 0.0 when the TARGET is not set or TARGET's length is zero
+        if(myTarget == null || myTarget.length == 0) { return (double) 0.0; }
+        // Returns Double.MAX_VALUE when the true value is infinite, or SPACE is not set
+        if(mySpace == null || mySpace.length == 0)  { return Double.MAX_VALUE; }
 
-        for(int p=0; p<np; p++) { // There are 2^(n-1) kinds of partitions.
-            // binary representation of p forms partition.
-            // for partition {"ab" "cde" "fg"}
-            // a b c d e f g   : myTarget
-            // T F T F F T F T : partition:
-            partition[0] = true; // I know that this is not needed, but..
-            for(int i=0; i<myTarget.length -1;i++) {
-                partition[i+1] = (0 !=((1<<i) & p));
-            }
-            partition[myTarget.length] = true;
+        if(debugMode) { showVariables(); }
+//        if(debugMode) { System.out.printf("np=%d length=%d ", np, +myTarget.length); }
+//        System.out.println("");
 
-            // Compute Information Quantity for the partition, in "value1"
-            // value1 = IQ(#"ab")+IQ(#"cde")+IQ(#"fg") for the above example
-            double value1 = (double) 0.0;
-            int end = 0;
-            int start = end;
-            while(start<myTarget.length) {
-                // System.out.write(myTarget[end]);
-                end++;;
-                while(partition[end] == false) {
-                    // System.out.write(myTarget[end]);
-                    end++;
+        // Dynamically store and find estimation
+        suffixEstimation = new double[myTarget.length];
+        suffixEstimation[0] = iq(0,1);
+        for(int n = 1; n < myTarget.length; n++){
+        // find min of each substring[0:n+1] and store in suffixEstimation[n]
+            double min = iq(0, n+1); // first take the iq(0, n+1)
+            for(int i = 0; i < n; i++){
+                // compare iq(0, n+1) with all (suffixEstimation[..] + iq(..)) to find the min
+                if(min > (suffixEstimation[i] + iq(i+1,n+1))) {
+                    min = suffixEstimation[i] + iq(i+1,n+1);
                 }
-                // System.out.print("("+start+","+end+")");
-                myFrequencer.setTarget(subBytes(myTarget, start, end));
-                value1 = value1 + iq(myFrequencer.frequency());
-                start = end;
             }
-            // System.out.println(" "+ value1);
-
-            // Get the minimal value in "value"
-            if(value1 < value) value = value1;
+            suffixEstimation[n] = min;
         }
-	if(debugMode) { System.out.printf("%10.5f\n", value); }
-        return value;
+
+        if(debugMode) { System.out.printf("\tInfoEstimation = %10.5f\n", suffixEstimation[myTarget.length-1]); }
+        return suffixEstimation[myTarget.length-1];
     }
 
     public static void main(String[] args) {
         InformationEstimator myObject;
         double value;
-	debugMode = true;
+        debugMode = true;
+
         myObject = new InformationEstimator();
         myObject.setSpace("3210321001230123".getBytes());
         myObject.setTarget("0".getBytes());

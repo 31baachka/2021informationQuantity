@@ -2,6 +2,8 @@ package s4.B213362; // Please modify to s4.Bnnnnnn, where nnnnnn is your student
 import java.lang.*;
 import s4.specification.*;
 
+// B191865 の方のコードを参考にしました
+
 /* What is imported from s4.specification
 package s4.specification;
 public interface InformationEstimatorInterface {
@@ -39,7 +41,10 @@ public class InformationEstimator implements InformationEstimatorInterface {
     }
 
     // IQ: information quantity for a count, -log2(count/sizeof(space))
-    double iq(int freq) {
+    double iq(int start, int end) { // estiation の変更に伴い変更
+        // 文字列の呼び出しをこちらで行う
+        myFrequencer.setTarget(subBytes(myTarget, start, end));
+        int freq = myFrequencer.frequency();
         return  - Math.log10((double) freq / (double) mySpace.length)/ Math.log10((double) 2.0);
     }
 
@@ -51,58 +56,46 @@ public class InformationEstimator implements InformationEstimatorInterface {
     @Override
     public void setSpace(byte[] space) {
         myFrequencer = new Frequencer();
-        mySpace = space; myFrequencer.setSpace(space);
+        mySpace = space;
+        myFrequencer.setSpace(space);
     }
 
     @Override
     public double estimation(){
-        boolean [] partition = new boolean[myTarget.length+1];
+        // buggy による修正 
+        if(myTarget == null || myTarget.length == 0) return (double) 0.0;
+        if(mySpace == null) return Double.MAX_VALUE;
+        
         int np = 1<<(myTarget.length-1);
-        double value = Double.MAX_VALUE; // value = mininimum of each "value1".
-	if(debugMode) { showVariables(); }
+        
+	    if(debugMode) { showVariables(); }
         if(debugMode) { System.out.printf("np=%d length=%d ", np, +myTarget.length); }
 
-        for(int p=0; p<np; p++) { // There are 2^(n-1) kinds of partitions.
-            // binary representation of p forms partition.
-            // for partition {"ab" "cde" "fg"}
-            // a b c d e f g   : myTarget
-            // T F T F F T F T : partition:
-            partition[0] = true; // I know that this is not needed, but..
-            for(int i=0; i<myTarget.length -1;i++) {
-                partition[i+1] = (0 !=((1<<i) & p));
+        // 計算結果を保存する配列
+        double[] suffixEstimation = new double[this.myTarget.length];
+        // 分割統治法でボトムアップ的に DP を行う
+        suffixEstimation[0] = iq(0, 1); // １文字のときの結果
+        for(int n=1; n < this.myTarget.length; n++)
+        { // 文字数をターゲットの文字まで増やしながら計算
+            double min = iq(0, n+1); // 最小の値を格納する変数
+            for(int i=0; i<n; i++)
+            { // 現在の文字までの計算結果の中から最小の値を格納
+                double temp = suffixEstimation[i] + iq(i+1, n+1); // 計算結果
+                if(min > temp) min = temp;
             }
-            partition[myTarget.length] = true;
-
-            // Compute Information Quantity for the partition, in "value1"
-            // value1 = IQ(#"ab")+IQ(#"cde")+IQ(#"fg") for the above example
-            double value1 = (double) 0.0;
-            int end = 0;
-            int start = end;
-            while(start<myTarget.length) {
-                // System.out.write(myTarget[end]);
-                end++;;
-                while(partition[end] == false) {
-                    // System.out.write(myTarget[end]);
-                    end++;
-                }
-                // System.out.print("("+start+","+end+")");
-                myFrequencer.setTarget(subBytes(myTarget, start, end));
-                value1 = value1 + iq(myFrequencer.frequency());
-                start = end;
-            }
-            // System.out.println(" "+ value1);
-
-            // Get the minimal value in "value"
-            if(value1 < value) value = value1;
+            suffixEstimation[n] = min; // 最終的な答えを配列にコピー
         }
+    
+    // 最終的な値を格納 & 出力
+    double value = suffixEstimation[this.myTarget.length-1];
 	if(debugMode) { System.out.printf("%10.5f\n", value); }
-        return value;
+    return value;
     }
 
     public static void main(String[] args) {
         InformationEstimator myObject;
         double value;
-	debugMode = true;
+	    debugMode = true;
         myObject = new InformationEstimator();
         myObject.setSpace("3210321001230123".getBytes());
         myObject.setTarget("0".getBytes());

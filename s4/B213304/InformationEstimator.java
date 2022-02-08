@@ -54,14 +54,35 @@ public class InformationEstimator implements InformationEstimatorInterface {
         mySpace = space; myFrequencer.setSpace(space);
     }
 
+    // B213377のソースコードを参考に作成
     @Override
     public double estimation(){
-        boolean [] partition = new boolean[myTarget.length+1];
+	if(myTarget == null) return (double) 0.0;
+	if(myTarget.length == 0) return (double) 0.0;
+	if(mySpace == null) return Double.MAX_VALUE;
+
         int np = 1<<(myTarget.length-1);
-        double value = Double.MAX_VALUE; // value = mininimum of each "value1".
 	if(debugMode) { showVariables(); }
         if(debugMode) { System.out.printf("np=%d length=%d ", np, +myTarget.length); }
 
+	double[] suffixEstimation = new double[myTarget.length + 1];
+	suffixEstimation[0] = 0.0;
+
+	for(int i = 1; i < myTarget.length + 1; i++) {
+        	int start = 0;
+		int end = i;
+		double value = Double.MAX_VALUE; // value = mininimum of each "value1".
+		
+		while(start < end) {
+                	myFrequencer.setTarget(subBytes(myTarget, start, end));
+			double value1 = suffixEstimation[start] + iq(myFrequencer.frequency());
+			if(value1 < value) value = value1;
+			start++;		
+		}
+		suffixEstimation[i] = value;
+	}
+
+/*
         for(int p=0; p<np; p++) { // There are 2^(n-1) kinds of partitions.
             // binary representation of p forms partition.
             // for partition {"ab" "cde" "fg"}
@@ -95,8 +116,9 @@ public class InformationEstimator implements InformationEstimatorInterface {
             // Get the minimal value in "value"
             if(value1 < value) value = value1;
         }
-	if(debugMode) { System.out.printf("%10.5f\n", value); }
-        return value;
+*/
+	if(debugMode) { System.out.printf("%10.5f\n", suffixEstimation[myTarget.length]); }
+        return suffixEstimation[myTarget.length];
     }
 
     public static void main(String[] args) {

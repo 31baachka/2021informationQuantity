@@ -2,6 +2,7 @@ package s4.B213365; // Please modify to s4.Bnnnnnn, where nnnnnn is your student
 import java.lang.*;
 import s4.specification.*;
 
+
 /* What is imported from s4.specification
 package s4.specification;
 public interface InformationEstimatorInterface {
@@ -40,6 +41,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
 
     // IQ: information quantity for a count, -log2(count/sizeof(space))
     double iq(int freq) {
+        if(freq == 0) return Double.MAX_VALUE;
         return  - Math.log10((double) freq / (double) mySpace.length)/ Math.log10((double) 2.0);
     }
 
@@ -54,49 +56,37 @@ public class InformationEstimator implements InformationEstimatorInterface {
         mySpace = space; myFrequencer.setSpace(space);
     }
 
+    //スライドの関数fに対応するメソッド
+    private double f(int start, int end){
+        myFrequencer.setTarget(subBytes(myTarget, start, end));
+        return iq(myFrequencer.frequency());
+    }
+
     @Override
     public double estimation(){
-        boolean [] partition = new boolean[myTarget.length+1];
-        int np = 1<<(myTarget.length-1);
-        double value = Double.MAX_VALUE; // value = mininimum of each "value1".
-	if(debugMode) { showVariables(); }
-        if(debugMode) { System.out.printf("np=%d length=%d ", np, +myTarget.length); }
+        if(myTarget == null) return (double) 0.0;
+        if(myTarget.length == 0) return (double) 0.0;
+        if(mySpace == null) return Double.MAX_VALUE;
 
-        for(int p=0; p<np; p++) { // There are 2^(n-1) kinds of partitions.
-            // binary representation of p forms partition.
-            // for partition {"ab" "cde" "fg"}
-            // a b c d e f g   : myTarget
-            // T F T F F T F T : partition:
-            partition[0] = true; // I know that this is not needed, but..
-            for(int i=0; i<myTarget.length -1;i++) {
-                partition[i+1] = (0 !=((1<<i) & p));
+	    if(debugMode) { showVariables(); }
+
+
+	    //参考: B191865
+        // Dynamically store and find estimation
+        double[] subIQ = new double[myTarget.length];
+        subIQ[0] = f(0,1);
+        for(int n = 1; n < myTarget.length; n++){
+            // find min of each substring[0:n+1] and store in subIQ[n]
+            subIQ[n] = f(0, n+1); // first take the iq(0, n+1)
+            for(int i = 0; i < n; i++){
+                // compare iq(0, n+1) with all (subIQ[..] + iq(..)) to find the min
+                val=subIQ[i] + f(i+1,n+1);
+                if(subIQ[n] > val)subIQ[n] = val;
             }
-            partition[myTarget.length] = true;
-
-            // Compute Information Quantity for the partition, in "value1"
-            // value1 = IQ(#"ab")+IQ(#"cde")+IQ(#"fg") for the above example
-            double value1 = (double) 0.0;
-            int end = 0;
-            int start = end;
-            while(start<myTarget.length) {
-                // System.out.write(myTarget[end]);
-                end++;;
-                while(partition[end] == false) {
-                    // System.out.write(myTarget[end]);
-                    end++;
-                }
-                // System.out.print("("+start+","+end+")");
-                myFrequencer.setTarget(subBytes(myTarget, start, end));
-                value1 = value1 + iq(myFrequencer.frequency());
-                start = end;
-            }
-            // System.out.println(" "+ value1);
-
-            // Get the minimal value in "value"
-            if(value1 < value) value = value1;
         }
-	if(debugMode) { System.out.printf("%10.5f\n", value); }
-        return value;
+        if(debugMode) { System.out.printf("%10.5f\n", subIQ[subIQ.length-1]); }
+        return subIQ[subIQ.length-1];
+
     }
 
     public static void main(String[] args) {

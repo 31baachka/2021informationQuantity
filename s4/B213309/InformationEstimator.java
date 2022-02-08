@@ -2,6 +2,8 @@ package s4.B213309; // Please modify to s4.Bnnnnnn, where nnnnnn is your student
 import java.lang.*;
 import s4.specification.*;
 
+// import java.util.Arrays;
+
 /* What is imported from s4.specification
 package s4.specification;
 public interface InformationEstimatorInterface {
@@ -19,8 +21,8 @@ public interface InformationEstimatorInterface {
 public class InformationEstimator implements InformationEstimatorInterface {
     static boolean debugMode = false;
     // Code to test, *warning: This code is slow, and it lacks the required test
-    byte[] myTarget; // data to compute its information quantity
-    byte[] mySpace;  // Sample space to compute the probability
+    byte[] myTarget = null; // data to compute its information quantity
+    byte[] mySpace = null;  // Sample space to compute the probability
     FrequencerInterface myFrequencer;  // Object for counting frequency
 
     private void showVariables() {
@@ -40,7 +42,10 @@ public class InformationEstimator implements InformationEstimatorInterface {
 
     // IQ: information quantity for a count, -log2(count/sizeof(space))
     double iq(int freq) {
-        return  - Math.log10((double) freq / (double) mySpace.length)/ Math.log10((double) 2.0);
+        if(freq == 0)
+            return Double.MAX_VALUE;
+        else
+            return  - Math.log10((double) freq / (double) mySpace.length)/ Math.log10((double) 2.0);
     }
 
     @Override
@@ -51,51 +56,76 @@ public class InformationEstimator implements InformationEstimatorInterface {
     @Override
     public void setSpace(byte[] space) {
         myFrequencer = new Frequencer();
-        mySpace = space; myFrequencer.setSpace(space);
+        mySpace = space; 
+        myFrequencer.setSpace(space);
     }
 
     @Override
     public double estimation(){
-        boolean [] partition = new boolean[myTarget.length+1];
-        int np = 1<<(myTarget.length-1);
+        // 定義的に返すべきケース
+        if(myTarget == null)
+            return (double) 0.0;
+        if(myTarget.length == 0)
+            return (double) 0.0;
+        if(mySpace == null)
+            return Double.MAX_VALUE;
+        
+        
         double value = Double.MAX_VALUE; // value = mininimum of each "value1".
-	if(debugMode) { showVariables(); }
+
+        int np = 1<<(myTarget.length-1);
+	    if(debugMode) { showVariables(); }
         if(debugMode) { System.out.printf("np=%d length=%d ", np, +myTarget.length); }
+        
+        // DPの実装
+        // 例："abcd"
+        // esti("a")       = iq("a")                                            -> mySuffixEstimation[0]
+        //
+        // esti("ab")      = min( iq("ab"),    (esti("a")      + iq("b")));     -> mySuffixEstimation[1]
+        //
+        // esti("abc")     = min( iq("abc"),   (esti("a")      + iq("bc")),
+        //                                     (esti("ab")     + iq("c"))   );  -> mySuffixEstimation[2]
+        //
+        // esti("abcd")    = min( iq("abcd"),  (esti("a")      + iq("bcd")),
+        //                                     (esti("ab")     + iq("cd")),
+        //                                     (esti("abc")    + iq("d"))   );  -> mySuffixEstimation[3]
+        // ----------------+------------------+----------------+------------
+        //                     文字列そのまま  | 既出の計算結果  と　その後ろの文字列
 
-        for(int p=0; p<np; p++) { // There are 2^(n-1) kinds of partitions.
-            // binary representation of p forms partition.
-            // for partition {"ab" "cde" "fg"}
-            // a b c d e f g   : myTarget
-            // T F T F F T F T : partition:
-            partition[0] = true; // I know that this is not needed, but..
-            for(int i=0; i<myTarget.length -1;i++) {
-                partition[i+1] = (0 !=((1<<i) & p));
+        // 先頭からn文字目の計算結果を格納する
+        double [] mySuffixEstimation  = new double[myTarget.length];
+
+        // 先頭1文字だけの情報量計算
+        myFrequencer.setTarget(subBytes(myTarget, 0, 1));
+        mySuffixEstimation[0] = iq(myFrequencer.frequency());
+        
+        // 2文字列からn文字列まで順に情報量計算を行う
+        for(int len = 1; len < mySuffixEstimation.length; len++){
+            double value1;
+            // まず、文字列そのまま
+            myFrequencer.setTarget(subBytes(myTarget, 0, len + 1));
+            value1 = iq(myFrequencer.frequency());
+
+            //　区切りのある文字列パターン
+            for(int slash = 1; slash < len + 1; slash++){
+                myFrequencer.setTarget(subBytes(myTarget, slash, len + 1)); // 区切りより後ろの文字列
+                // 区切りあり文字列の情報量 = 既出の計算結果 + 後続の文字列の情報量
+                double value2 = mySuffixEstimation[slash - 1] + iq(myFrequencer.frequency());
+                // 情報量がより小さい場合に更新
+                if(value2 < value1)
+                    value1 = value2;
             }
-            partition[myTarget.length] = true;
-
-            // Compute Information Quantity for the partition, in "value1"
-            // value1 = IQ(#"ab")+IQ(#"cde")+IQ(#"fg") for the above example
-            double value1 = (double) 0.0;
-            int end = 0;
-            int start = end;
-            while(start<myTarget.length) {
-                // System.out.write(myTarget[end]);
-                end++;;
-                while(partition[end] == false) {
-                    // System.out.write(myTarget[end]);
-                    end++;
-                }
-                // System.out.print("("+start+","+end+")");
-                myFrequencer.setTarget(subBytes(myTarget, start, end));
-                value1 = value1 + iq(myFrequencer.frequency());
-                start = end;
-            }
-            // System.out.println(" "+ value1);
-
-            // Get the minimal value in "value"
-            if(value1 < value) value = value1;
+            // len+1文字列の情報量
+            mySuffixEstimation[len] = value1;
         }
-	if(debugMode) { System.out.printf("%10.5f\n", value); }
+        // n文字列の計算結果はn-1番目に格納されている
+        double ans = mySuffixEstimation[mySuffixEstimation.length - 1];
+        if(ans < value)
+                value = ans;
+
+        if(debugMode)
+            System.out.printf("%10.5f\n", mySuffixEstimation[mySuffixEstimation.length - 1]);
+        
         return value;
     }
 
@@ -112,6 +142,10 @@ public class InformationEstimator implements InformationEstimatorInterface {
         myObject.setTarget("0123".getBytes());
         value = myObject.estimation();
         myObject.setTarget("00".getBytes());
+        value = myObject.estimation();
+        // additional case
+        myObject.setSpace("1212121221212112121212121221221".getBytes());
+        myObject.setTarget("1212121211212222222212111111111121214212111212121221".getBytes());
         value = myObject.estimation();
     }
 }
